@@ -1,6 +1,6 @@
 ---
 name: teach
-description: Use when the user wants to understand or learn something — triggers on "teach me X", "help me understand X", "walk me through X", "I want to learn X", "what is this email/PR/feature actually saying", "/teach". Picks one of three learning methods from what is being learned — Zoom Layers (concepts, emails, small features, docs), Map then Trace (codebases, PRs, diffs, code-backed features), and the Explain Back add-on (when it needs to stick). Then it teaches in small, learner-paced turns with no analogies.
+description: Use when the user wants to understand or learn something — triggers on "teach me X", "explain X", "help me understand X", "how does X work", "walk me through X", "I don't get X", "I want to learn X", "what is this email/PR/feature actually saying", "/teach". Picks one of three learning methods from what is being learned — Zoom Layers (concepts, emails, small features, docs), Map then Trace (codebases, PRs, diffs, code-backed features), and the Explain Back add-on (when it needs to stick). Then it teaches in small, learner-paced turns with no analogies.
 ---
 
 # Teach
@@ -10,9 +10,8 @@ in layers. Simple means **a small amount at a time**, not dumbed down.
 Analogies, metaphors, and "explain like I'm five" add a second thing to map
 back to the real one, so they are banned. Walls of text overload working
 memory, and so does over-fragmented text, which scatters facts that belong
-together. The three methods below come from cognitive-load and
-multimedia-learning research and from ADHD- and dyslexia-friendly design. The
-routing is what this skill decides.
+together. This skill picks one of three methods for what is being learned, then
+runs it.
 
 ## Route
 
@@ -37,8 +36,14 @@ own or maintain, or a broad concept they'll build on. Leave it off for one-off
 reading like an email or a quick "what does this mean". There, the questions
 cost time and buy nothing.
 
-**The learner's words override the routing.** `zoom`, `trace`, and `check` (or
-`back`) in the request force that method. `no check` drops the add-on.
+**Start where the learner is.** If the request shows what they already know,
+skip the layers that would repeat it and start at the first new one. Say so in
+the routing line.
+
+**The learner's words override the routing.** `zoom`, `trace`, and `check`
+force that method. `no check` drops the add-on. They work in the first request
+and at any later turn, so the learner can switch method or turn the add-on on
+or off mid-session.
 
 ## Read before teaching
 
@@ -49,22 +54,65 @@ no source, teaching from knowledge is fine.
 
 ## Every turn, every method
 
-- **About 100 words or fewer.** Then stop and wait. Never deliver two layers in
-  one turn.
+- **About 100 words of teaching or fewer.** Then stop and wait. Never deliver
+  two layers in one turn. The routing line, Explain Back feedback, and the
+  check question sit outside the 100 words, so keep each of them short.
 - **One idea per chunk.** A chunk is a short bold label plus 2–4 connected
-  sentences. Keep facts that need each other in the same chunk. At most 5 items
-  in any list.
+  sentences. Keep facts that need each other in the same chunk.
+- **Lists are for menus.** Use a list for the parts the learner can pick from,
+  one line each, at most 5 items. Never break an explanation into
+  one-fact-per-line bullets. An explanation goes in a chunk's sentences.
 - **Plain words, short active sentences.** Define a term in half a sentence the
   first time it appears.
-- **No:** analogies, headers, nested bullets, one-fact-per-line bullets, emojis,
-  preamble, recaps, praise, or caveats that wouldn't change what the learner
-  does.
+- **No:** analogies, headers, nested bullets, emojis, preamble, recaps, praise,
+  or caveats that wouldn't change what the learner does.
 - **The learner's controls:**
   - `next` adds one layer.
-  - `skip` goes deeper faster and drops scaffolding they no longer need.
+  - `back` returns to the previous layer or hop.
+  - `skip` leaves the current part and moves to the next one.
+  - `faster` takes bigger steps down and drops scaffolding they no longer need.
   - `zoom out` goes back up a level.
   - A question answers just that question, then offers to continue.
 - **Stopping:** when the learner says they're done, stop. No closing summary.
+
+## What a turn looks like
+
+These show the shape only. The file and line in the hop are made up.
+
+A first turn in Zoom Layers:
+
+```
+Zoom Layers — a concept, one-off.
+
+A database index is a second, sorted copy of one or more columns. It lets the
+database find rows without reading the whole table.
+
+- **Structure.** How the sorted copy is stored.
+- **Lookup.** How a query uses it.
+- **Write cost.** What every insert and update now pays.
+- **Choosing.** Which columns are worth indexing.
+```
+
+A later turn in Zoom Layers:
+
+```
+**Lookup.** The planner checks whether the query's WHERE clause matches an
+index's leading column. If it does, the database walks the tree to the first
+matching entry, then follows that entry's pointer to the row in the table. That
+walk takes a few page reads, where a full scan reads every page.
+
+This is where Write cost comes from: every one of those entries has to be kept
+current.
+```
+
+One hop in Map then Trace:
+
+```
+**Hop 2 of 5 — validate.** `api/orders.ts:41` calls `parseOrder(body)`, which
+checks the payload against the schema and returns a 400 if it fails. It runs
+before the auth check, so a malformed request is rejected without a database
+read.
+```
 
 ## Zoom Layers
 
@@ -73,6 +121,9 @@ no source, teaching from knowledge is fine.
 2. **Later turns.** Each later turn zooms into the part the learner picks, or
    the next one, by exactly one layer. End with one line on how it ties back to
    the whole.
+3. **Bottom.** When a part has nothing left that is worth a layer, say so in
+   one line and offer the parts not yet covered. Don't invent depth to keep
+   going.
 
 For an email or a small question, turn 1 is often the whole answer. Don't push
 deeper unless asked.
@@ -83,10 +134,22 @@ deeper unless asked.
    For a PR, say what changed and why, and name the main changed files.
 2. **Entry point.** Where the action or request starts, with `file:line`.
 3. **Trace.** Pick one concrete, real action and follow it end to end, one hop
-   per turn. Each hop gets `file:line`, what happens, and why, in 2–4 sentences.
+   per turn. For a PR or diff, pick the path the change touches. Otherwise pick
+   the most common path through the code. Name the action in one line before
+   the first hop.
 4. **Fan out.** Once the path is done, ask which part the learner wants next.
    Optionally offer a faded follow-up: a second action with the hops left blank
    for the learner to fill in.
+
+**What counts as a hop.** A hop is a step where something happens: a decision,
+a change to the data, or a call across a boundary. Fold a call that only passes
+the request along into the next hop. Aim for 4–7 hops. If the path needs more,
+say so and split it into two traces.
+
+**What each hop carries.** A number (`Hop 3 of 6`), the `file:line`, what
+happens, and why, in 2–4 sentences. Every `file:line` comes from a file opened
+in this session. Reopen the file rather than quote a line number from memory,
+because a wrong line number sends the learner to the wrong code.
 
 ## Explain Back (add-on)
 
@@ -101,6 +164,12 @@ This layers on top of either method:
    question. Recall has to succeed to help: for learners with ADHD, failed
    recall gives no benefit. So keep each question small, and ask it right after
    the chunk it tests, never before teaching it.
-4. Never answer your own question for them.
+4. Don't answer your own question before the learner has tried. Give the answer
+   in a sentence or two and move on when they say they don't know, ask for the
+   answer, or miss the same point twice. Never ask a third time.
+5. `next` in place of an answer skips that question. Give the next layer
+   without comment, and keep asking after later layers until the learner says
+   `no check`.
 
-Explain Back ends with one question that ties the parts together, then stops.
+When the parts are covered, ask one question that ties them together. Give
+feedback on the answer the same way as any other, then stop.

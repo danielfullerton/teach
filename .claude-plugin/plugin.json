@@ -1,6 +1,6 @@
 {
   "name": "teach",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Learn anything in small, learner-paced layers. Routes each request to Zoom Layers, Map then Trace, or the Explain Back add-on.",
   "author": { "name": "danielfullerton" },
   "homepage": "https://github.com/danielfullerton/teach",

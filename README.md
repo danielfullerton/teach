@@ -31,6 +31,7 @@ Ask in plain words, or call the skill directly:
 
 ```text
 /teach how OAuth refresh tokens work
+explain how database indexes work
 teach me what this PR changes: https://github.com/OWNER/REPO/pull/123
 help me understand what this email is asking me to do
 /teach trace src/server.ts
@@ -56,27 +57,43 @@ switches.
   "master", "quiz me", or "make it stick". It's also added for something you'll
   own or maintain. It stays off for one-off reading, such as an email.
 
-To force a choice, put one of these words in your request:
+If your request shows what you already know, the skill skips the layers that
+would repeat it and starts at the first new one.
+
+To force a choice, say one of these words in your request or at any later turn:
 
 - `zoom` forces Zoom Layers.
 - `trace` forces Map then Trace.
-- `check` or `back` adds Explain Back.
+- `check` adds Explain Back.
 - `no check` removes Explain Back.
 
 ### Controls during a lesson
 
-- `next`: add one layer.
-- `skip`: go deeper faster and drop the beginner scaffolding.
+- `next`: add one layer. During Explain Back, `next` in place of an answer
+  skips that question.
+- `back`: return to the previous layer or hop.
+- `skip`: leave the current part and move to the next one.
+- `faster`: take bigger steps down and drop the beginner scaffolding.
 - `zoom out`: go back up a level.
 - Any question: get an answer to just that question, then an offer to continue.
+
+### What Explain Back does when you're stuck
+
+Explain Back doesn't answer its own question before you try. It gives you the
+answer and moves on when you say you don't know, when you ask for the answer,
+or when you miss the same point twice.
 
 ## Format rules
 
 Every turn, in every method, follows these rules:
 
-- About 100 words or fewer, then a stop.
+- About 100 words of teaching or fewer, then a stop. The line that names the
+  method, Explain Back feedback, and the check question sit outside that count.
 - One idea per chunk: a short bold label plus 2–4 connected sentences.
-- No more than 5 items in any list.
+- Lists only for the menu of parts you can pick from, with no more than 5
+  items. Explanations go in sentences, not one-fact-per-line bullets.
+- In a trace, each hop is numbered (`Hop 3 of 6`) and a trace aims for 4–7
+  hops. Every `file:line` comes from a file opened in the session.
 - Plain words and short active sentences, with each term defined the first time
   it appears.
 - No analogies, headers, nested bullets, emojis, preamble, recaps, or praise.
@@ -89,7 +106,7 @@ the same methods from a pasted prompt.
 **Zoom Layers**
 
 ```text
-Use Zoom Layers to help me understand <X>. Start with the bottom line in 1–2 sentences, then the 3–5 main parts, one line each. Stop. When I pick a part or say "next", add one layer: under 100 words, short connected paragraphs, plus one line on how it ties back to the whole. No analogies, no headers, no filler. If I say "skip", go deeper faster.
+Use Zoom Layers to help me understand <X>. Start with the bottom line in 1–2 sentences, then the 3–5 main parts, one line each. Stop. When I pick a part or say "next", add one layer: under 100 words, short connected paragraphs, plus one line on how it ties back to the whole. No analogies, no headers, no filler. If I say "faster", go deeper faster.
 ```
 
 **Map then Trace**
@@ -101,7 +118,7 @@ Use Map then Trace on <repo/PR/doc>. Turn 1: what it does in one sentence and it
 **Explain Back** (add it to either prompt above)
 
 ```text
-Add Explain Back: after each layer, ask me one short open question about just that layer and wait. When I answer, tell me what's right and the single most important gap, in 2–3 sentences. No praise.
+Add Explain Back: after each layer, ask me one short open question about just that layer and wait. When I answer, tell me what's right and the single most important gap, in 2–3 sentences. No praise. If I say I don't know, give me the answer and move on.
 ```
 
 ## Research behind the methods
@@ -132,7 +149,8 @@ studies of AI tutors:
   harder to learn when it's scattered. That is why the format rule is "one idea
   per chunk", not one fact per bullet.
 - **Expertise reversal.** Scaffolding that helps beginners slows down people who
-  already know the material. That is why `skip` exists.
+  already know the material. That is why `faster` exists, and why the skill
+  starts from what you already know.
 - **Step-by-step AI tutoring.** A Harvard randomized trial found an AI tutor
   that replied in a few sentences, one step at a time, beat an active-learning
   class ([Kestin et al., 2025](https://pmc.ncbi.nlm.nih.gov/articles/PMC12179260/)).
