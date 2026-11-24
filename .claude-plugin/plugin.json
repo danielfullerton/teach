@@ -1,0 +1,10 @@
+{
+  "name": "teach",
+  "version": "1.0.0",
+  "description": "Learn anything in small, learner-paced layers. Routes each request to Zoom Layers, Map then Trace, or the Explain Back add-on.",
+  "author": { "name": "danielfullerton" },
+  "homepage": "https://github.com/danielfullerton/teach",
+  "repository": "https://github.com/danielfullerton/teach",
+  "license": "MIT",
+  "keywords": ["learning", "teaching", "adhd", "dyslexia", "code-reading"]
+}

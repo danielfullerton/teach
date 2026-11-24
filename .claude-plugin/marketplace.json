@@ -1,0 +1,14 @@
+{
+  "name": "teach",
+  "description": "The teach plugin: learn anything in small, learner-paced layers.",
+  "owner": {
+    "name": "danielfullerton"
+  },
+  "plugins": [
+    {
+      "name": "teach",
+      "source": "./",
+      "description": "Learn anything in small, learner-paced layers. Routes each request to Zoom Layers, Map then Trace, or the Explain Back add-on."
+    }
+  ]
+}
